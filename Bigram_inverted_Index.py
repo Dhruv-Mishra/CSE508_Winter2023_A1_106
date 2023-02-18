@@ -83,7 +83,6 @@ class Bigram_Inverted_Index:
         filter_li = list(set(filter_li))
         self.addDoc(filter_li,self.document_count)
         self.name_arr.append(path)
-        print(self.name_arr)
         self.document_count+=1
     
     def processQuery(self,input_seq):
@@ -154,7 +153,6 @@ class Bigram_Inverted_Index:
                 st +=1
             else:
                 st2+=1
-            self.comparisons+=1
         return merge_li
 
     def extract_text(self,s):
@@ -181,12 +179,12 @@ def getNum(i):
     return (4-len(str(i)))*"0" + str(i)
 
 try:
-    invertedIndex = pickle.load(open("bigram_index_savefile.pickle", "rb"))
+    invertedIndex = pickle.load(open("data/bigram_index_savefile.pickle", "rb"))
 except (OSError, IOError) as e:
     invertedIndex = Bigram_Inverted_Index()
     for j in range(1,1401): # 1,1401
         f = invertedIndex.new_Data("CSE508_Winter2023_Dataset/cranfield"+getNum(j))
-    pickle.dump(invertedIndex, open("bigram_index_savefile.pickle", "wb"))
+    pickle.dump(invertedIndex, open("data/bigram_index_savefile.pickle", "wb"))
 
 print("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 # print(inverted_ind)

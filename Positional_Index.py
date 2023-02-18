@@ -143,6 +143,7 @@ class Positional_Inverted_Index:
     def getOutput(self,input_seq,show_names = False):
         query = Query(input_seq)
         input_li= query.getQuery()
+        input_li.append(input_li[-1])
         output = list(set(self.processHelper(input_li)))
         output.sort()
         if(show_names):
@@ -156,12 +157,12 @@ def getNum(i):
     return (4-len(str(i)))*"0" + str(i)
 
 try:
-    invertedIndex = pickle.load(open("inverted_index_savefile.pickle", "rb"))
-except (OSError, IOError) as e:
+    invertedIndex = pickle.load(open("data/positional_index_savefile.pickle", "rb"))
+except:
     invertedIndex = Positional_Inverted_Index()
     for j in range(1,1401): # 1,1401
         f = invertedIndex.new_Data("CSE508_Winter2023_Dataset/cranfield"+getNum(j))
-    pickle.dump(invertedIndex, open("inverted_index_savefile.pickle", "wb"))
+    pickle.dump(invertedIndex, open("data/positional_index_savefile.pickle", "wb"))
 
 print("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 n = int(input())

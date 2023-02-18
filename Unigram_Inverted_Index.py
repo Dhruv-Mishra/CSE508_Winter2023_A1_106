@@ -84,17 +84,18 @@ class Inverted_Index:
     def new_Data(self,path):
         f = open(path,"r")
         s = f.read()
+        f.close()
         new_s = self.extract_text(s)
         new_s = new_s.lower()
         translate_table = dict((ord(char), " ") for char in string.punctuation)   
         new_s = new_s.translate(translate_table)
-        f.close()
         li = word_tokenize(new_s)
         stop_words = set(stopwords.words("english"))
         filter_li = []
         for words in li:
             if(words not in stop_words):
                 filter_li.append(words)
+        filter_li = list(set(filter_li))
         self.addDoc(filter_li,self.document_count)
         self.name_arr.append(path)
         self.document_count+=1
@@ -268,12 +269,12 @@ def getNum(i):
     return (4-len(str(i)))*"0" + str(i)
 
 try:
-    inverted_index = pickle.load(open("unigram_inverted_index_savefile.pickle", "rb"))
+    inverted_index = pickle.load(open("data/unigram_inverted_index_savefile.pickle", "rb"))
 except (OSError, IOError) as e:
     inverted_index = Inverted_Index()
     for j in range(1,1401): # 1,1401
         f = inverted_index.new_Data("CSE508_Winter2023_Dataset/cranfield"+getNum(j))
-    pickle.dump(inverted_index, open("unigram_inverted_index_savefile.pickle", "wb"))
+    pickle.dump(inverted_index, open("data/unigram_inverted_index_savefile.pickle", "wb"))
 
 print("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 n = int(input())
