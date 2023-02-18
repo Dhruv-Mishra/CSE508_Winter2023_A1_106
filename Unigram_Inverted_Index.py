@@ -269,12 +269,12 @@ def getNum(i):
     return (4-len(str(i)))*"0" + str(i)
 
 try:
-    inverted_index = pickle.load(open("data/unigram_inverted_index_savefile.pickle", "rb"))
+    inverted_index = pickle.load(open("SaveData/unigram_inverted_index_savefile.pickle", "rb"))
 except (OSError, IOError) as e:
     inverted_index = Inverted_Index()
     for j in range(1,1401): # 1,1401
-        f = inverted_index.new_Data("CSE508_Winter2023_Dataset/cranfield"+getNum(j))
-    pickle.dump(inverted_index, open("data/unigram_inverted_index_savefile.pickle", "wb"))
+        f = inverted_index.new_Data("Data/CSE508_Winter2023_Dataset/cranfield"+getNum(j))
+    pickle.dump(inverted_index, open("SaveData/unigram_inverted_index_savefile.pickle", "wb"))
 
 print("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 n = int(input())

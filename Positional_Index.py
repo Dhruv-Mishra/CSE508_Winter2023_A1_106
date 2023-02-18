@@ -157,12 +157,12 @@ def getNum(i):
     return (4-len(str(i)))*"0" + str(i)
 
 try:
-    invertedIndex = pickle.load(open("data/positional_index_savefile.pickle", "rb"))
+    invertedIndex = pickle.load(open("SaveData/positional_index_savefile.pickle", "rb"))
 except:
     invertedIndex = Positional_Inverted_Index()
     for j in range(1,1401): # 1,1401
-        f = invertedIndex.new_Data("CSE508_Winter2023_Dataset/cranfield"+getNum(j))
-    pickle.dump(invertedIndex, open("data/positional_index_savefile.pickle", "wb"))
+        f = invertedIndex.new_Data("Data/CSE508_Winter2023_Dataset/cranfield"+getNum(j))
+    pickle.dump(invertedIndex, open("SaveData/positional_index_savefile.pickle", "wb"))
 
 print("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 n = int(input())
