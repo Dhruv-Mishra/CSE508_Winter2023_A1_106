@@ -32,29 +32,33 @@ class Positional_Inverted_Index:
     inverted_ind = {} # {word:dict} #dict{id:list}
     document_count = 0
     name_arr = []
+    word_freq = {}
 
-    def extract_text(self,s):
-        start = [0,0] #Start is inclusive 
-        end = [0,0] #End is exclusive
-        for i in range(len(s)):
-            if(i + 7 <= len(s) and s[i:i+7] == "<TITLE>"):
-                start[0] = i+7
-            elif(i + 8 <= len(s) and s[i:i+8] == "</TITLE>"):
-                end[0] = i
-            elif(i + 6 <= len(s) and s[i:i+6] == "<TEXT>"):
-                start[1] = i+6
-            elif(i + 7 <= len(s) and s[i:i+7] == "</TEXT>"):
-                end[1] = i
-
-        new_s = s[start[0]:end[0]] + " " + s[start[1]:end[1]]
-        new_s = " ".join(new_s.split("\n"))
-        new_s = " ".join(new_s.split("-"))
+    def extract_text(self,s,find_tags = False, remove_separators = False):
+        new_s = s[::]
+        if(find_tags):
+            start = [0,0] #Start is inclusive 
+            end = [0,0] #End is exclusive
+            for i in range(len(s)):
+                if(i + 7 <= len(s) and s[i:i+7] == "<TITLE>"):
+                    start[0] = i+7
+                elif(i + 8 <= len(s) and s[i:i+8] == "</TITLE>"):
+                    end[0] = i
+                elif(i + 6 <= len(s) and s[i:i+6] == "<TEXT>"):
+                    start[1] = i+6
+                elif(i + 7 <= len(s) and s[i:i+7] == "</TEXT>"):
+                    end[1] = i
+            new_s = s[start[0]:end[0]] + " " + s[start[1]:end[1]]
+        if(remove_separators):
+            new_s = " ".join(new_s.split("\n"))
+            new_s = " ".join(new_s.split("-"))
         return new_s
     
     def __init__(self):
         self.inverted_ind = {}
         self.document_count = 0
         self.name_arr = []
+        self.word_freq = {}
 
     def new_Data(self,path):
         f = open(path,"r")
@@ -78,12 +82,14 @@ class Positional_Inverted_Index:
         for i in range(len(token_list)):
             key = token_list[i]
             if(key in self.inverted_ind.keys()):
+                self.word_freq[key]+=1
                 dict = self.inverted_ind[str(key)]
                 if(int(doc_id) not in dict.keys()):
                     dict[int(doc_id)] = [i]
                 else:
                     dict[int(doc_id)].append(i)
             else:
+                self.word_freq[key] = 1
                 dict = {}
                 dict[int(doc_id)] = [i]
                 self.inverted_ind[str(key)] = dict

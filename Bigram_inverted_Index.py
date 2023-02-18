@@ -155,24 +155,24 @@ class Bigram_Inverted_Index:
                 st2+=1
         return merge_li
 
-    def extract_text(self,s):
-        start = [0,0] #Start is inclusive 
-        end = [0,0] #End is exclusive
-
-        for i in range(len(s)):
-            if(i + 7 <= len(s) and s[i:i+7] == "<TITLE>"):
-                start[0] = i+7
-            elif(i + 8 <= len(s) and s[i:i+8] == "</TITLE>"):
-                end[0] = i
-            elif(i + 6 <= len(s) and s[i:i+6] == "<TEXT>"):
-                start[1] = i+6
-            elif(i + 7 <= len(s) and s[i:i+7] == "</TEXT>"):
-                end[1] = i
-
-        new_s = s[start[0]:end[0]] + " " + s[start[1]:end[1]]
-        new_s = " ".join(new_s.split("\n"))
-        new_s = " ".join(new_s.split("-"))
-
+    def extract_text(self,s,find_tags = False, remove_separators = False):
+        new_s = s[::]
+        if(find_tags):
+            start = [0,0] #Start is inclusive 
+            end = [0,0] #End is exclusive
+            for i in range(len(s)):
+                if(i + 7 <= len(s) and s[i:i+7] == "<TITLE>"):
+                    start[0] = i+7
+                elif(i + 8 <= len(s) and s[i:i+8] == "</TITLE>"):
+                    end[0] = i
+                elif(i + 6 <= len(s) and s[i:i+6] == "<TEXT>"):
+                    start[1] = i+6
+                elif(i + 7 <= len(s) and s[i:i+7] == "</TEXT>"):
+                    end[1] = i
+            new_s = s[start[0]:end[0]] + " " + s[start[1]:end[1]]
+        if(remove_separators):
+            new_s = " ".join(new_s.split("\n"))
+            new_s = " ".join(new_s.split("-"))
         return new_s
 
 def getNum(i):
