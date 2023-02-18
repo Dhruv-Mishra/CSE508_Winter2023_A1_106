@@ -29,19 +29,7 @@ class Query:
 
     def __init__(self,input_seq):
         input_li = self.tokenize_seq(input_seq)
-        # op_li = []
-        # first_op_li = []
-        # if(op_seq != ""):
-        #     first_op_li = op_seq.split(",")
-        #     for i in range(len(first_op_li)):
-        #         temp_l = first_op_li[i].split()
-        #         for j in temp_l:
-        #             op_li.append(j)
-
-        # for i in range(len(op_li)):
-            # op_li[i] = (op_li[i].strip()).lower()
         self.input_li = input_li
-        # self.op_li = op_li
     
     def getQuery(self):
         return self.input_li
@@ -55,8 +43,9 @@ class Bigram_Inverted_Index:
     def __init__(self):
         self.inverted_ind = {}
         self.universal_set = set()
-        
-    
+        self.document_count = 0
+        self.name_arr = []
+            
     def addDoc(self,token_list,id):
         for i in range(len(token_list)):
             key = token_list[i]
@@ -87,30 +76,23 @@ class Bigram_Inverted_Index:
         for words in li:
             if(words not in stop_words):
                 filter_li.append(words)
-
         new_li = filter_li[::]
         filter_li = []
         for i in range(len(new_li)-1):
             filter_li.append(new_li[i]+" "+new_li[i+1])
         filter_li = list(set(filter_li))
-
-        # for token in filter_li:
-        # inverted_index.addDoc(token,getNum(j))
         self.addDoc(filter_li,self.document_count)
         self.name_arr.append(path)
+        print(self.name_arr)
         self.document_count+=1
     
     def processQuery(self,input_seq):
-        self.comparisons = 0
-
         query = Query(input_seq)
         input_li = query.getQuery()
         op_helper = []
         for i in range(len(input_li)-1):
             op_helper.append('and')
-
         str_qry = self.getStringQuery(input_li,op_helper)
-
         for i in range(len(input_li)):
             if(input_li[i] in self.inverted_ind.keys()):
                 input_li[i] = self.inverted_ind[input_li[i]]
@@ -131,7 +113,6 @@ class Bigram_Inverted_Index:
 
         if(j < len(input_li)):
             ans.append(input_li[j])
-
         final_ans = " ".join(ans)
         return final_ans
 
@@ -142,9 +123,13 @@ class Bigram_Inverted_Index:
         # print("Number of Documents:",len(output[0]))
         # print("Document IDs:",*output[0])
         # print("Number of comparisons for fetching result:",comp_ans)
-        return output
+        if(show_names):
+            fin_out = []
+            for i in output[0]:
+                fin_out.append(self.name_arr[i])
+            return fin_out
+        return output[0]
 
-    
     def query_sched(self,input_li,op_li): #input_li is list of lists, each list in input_li is the doc_list of a regex
         if(len(op_li) == 0):
             return input_li
@@ -172,7 +157,6 @@ class Bigram_Inverted_Index:
             self.comparisons+=1
         return merge_li
 
-
     def extract_text(self,s):
         start = [0,0] #Start is inclusive 
         end = [0,0] #End is exclusive
@@ -196,50 +180,6 @@ class Bigram_Inverted_Index:
 def getNum(i):
     return (4-len(str(i)))*"0" + str(i)
 
-# inverted_index = Bigram_Inverted_Index()
-
-# for j in range(1,10): # 1,1401
-#     f = open("CSE508_Winter2023_Dataset/cranfield"+getNum(j),"r")
-#     s = f.read()
-#     #print("Original File:",s)
-#     new_s = extract_text(s)
-#     #print("Baisc Text Extraction:",new_s)
-#     new_s = new_s.lower()
-#     #print("Converting to Lowercase:",new_s)
-#     translate_table = dict((ord(char), " ") for char in string.punctuation)   
-#     new_s = new_s.translate(translate_table)
-#     #print("After Removal of Punctuation:",new_s)
-#     f.close()
-#     li = word_tokenize(new_s)
-#     #print("Tokenizing the string:",end = " ")
-#     #print(li)
-#     stop_words = set(stopwords.words("english"))
-#     filter_li = []
-#     for words in li:
-#         if(words not in stop_words):
-#             filter_li.append(words)
-#     #print("Filtering Stopwords:",filter_li)
-#     new_li = filter_li[::]
-#     filter_li = []
-#     for i in range(len(new_li)-1):
-#         filter_li.append(new_li[i]+" "+new_li[i+1])
-#     filter_li = list(set(filter_li))
-#     for token in filter_li:
-#         inverted_index.addDoc(token,getNum(j))
-# print(inverted_index.inverted_ind)
-
-# n = int(input())
-# for i in range(n):
-#     inp_seq = input()
-#     output = inverted_index.getOutput(inp_seq)
-#     print(output)
-
-# with open('file.pkl', 'wb') as file:
-#     pickle.dump(inverted_index,file)
-
-# with open('file.pkl', 'rb') as file:
-#     new_inverted_index = pickle.load(file)
-
 try:
     invertedIndex = pickle.load(open("bigram_index_savefile.pickle", "rb"))
 except (OSError, IOError) as e:
@@ -257,11 +197,10 @@ for i in range(n):
     output = invertedIndex.getOutput(inp_seq, show_names = True)
     # output = invertedIndex.getOutput(inp_seq,show_names = True)
     print("Number of Documents Retrieved:",len(output))
-    print(output)
-    if(len(output[0])>0):
+    if(len(output)>0):
         print("The following documents contain your search phrase:")
         for j in range(len(output)):
-            print("\t",str(j+1)+".",output[j][0])
+            print("\t",str(j+1)+".",output[j])
     else:
         print("No matches found!")
     print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
